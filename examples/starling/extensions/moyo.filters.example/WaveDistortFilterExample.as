@@ -22,8 +22,8 @@ package starling.extensions.moyo.filters.example
      */
     public class WaveDistortFilterExample extends Sprite
     {
-        [Embed(source="/images/tex.jpg")]
-//        [Embed(source="/images/bluepillredpill.png")]
+//        [Embed(source="/images/tex.jpg")]
+        [Embed(source="/images/bluepillredpill.png")]
         public static const BluePillRedPill:Class;
         private var theFilter : WaveDistortFilter;
 
