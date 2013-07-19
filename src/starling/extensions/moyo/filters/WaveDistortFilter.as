@@ -27,6 +27,7 @@ package starling.extensions.moyo.filters
         public var centerPoint:Point = new Point(0,0);
         public var strength:Number = 0.0;               // 0.0 -> 0.5 -> 0.0
         public var step:Number = 0.0;                   // 0.0 -> 1.0
+        public var pow:Number = 2.0;
 
         // Converted from https://www.shadertoy.com/view/XdfGz2
         private static const FRAGMENT_SHADER : String =
@@ -66,7 +67,7 @@ package starling.extensions.moyo.filters
                                                                0.5,   // const
                                                                0.0];  // const
 
-        private var fc2 : Vector.<Number> = new <Number> [      2.0, // const
+        private var fc2 : Vector.<Number> = new <Number> [      2.0, // pow
                                                                 0,
                                                                 0,
                                                                 0 ];
@@ -94,11 +95,13 @@ package starling.extensions.moyo.filters
         protected override function activate (pass : int, context : Context3D, texture : Texture) : void
         {
             fc0[0] = centerPoint.x / texture.width;
-            fc0[1] = centerPoint.y / texture.width;
+            fc0[1] = centerPoint.y / texture.height;
             fc0[2] = strength;
             fc0[3] = step;
 
             fc1[0] = step * 0.2;
+
+            fc2[0] = pow;
 
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, fc0, 1);
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, fc1, 1);
