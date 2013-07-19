@@ -33,50 +33,29 @@ package starling.extensions.moyo.filters
         // Converted from https://www.shadertoy.com/view/XdfGz2
         private static const FRAGMENT_SHADER : String =
 
-            "mov ft5, v0\n" +
-////            add rendertexture offsets
-//            "add ft5.x, v0.x, fc2.z\n" +
-//            "add ft5.y, v0.y, fc2.w\n" +
-
             // ft1.x = sin((v0.y + t * 0.2) * 100.0) * tn;
-            "add ft1.x, ft5.y, fc1.x\n" +
+            "add ft1.x, v0.y, fc1.x\n" +
             "mul ft1.x, ft1.x, fc1.y\n" +
             "sin ft1.x, ft1.x\n" +
             "mul ft1.x, ft1.x, fc0.z\n" +
 
-            // distX = max(0.0, 0.5 - distance(m.x, uv.x)/t ) ^ 2;
-            "sub ft2.x, fc0.x, ft5.x\n" +
-            "abs ft2.x, ft2.x\n" +
-            "div ft2.x, ft2.x, fc0.w\n" +
-            "sub ft2.x, fc1.z, ft2.x\n" +
-            "max ft2.x, fc1.w, ft2.x\n" +
-            "pow ft2.x, ft2.x, fc2.x\n" +
+            // dist = max(0.0, 0.5 - distance(Center Point, v0) / step ) ^ 2;
+            "sub ft2.xy, fc0.xy, v0.xy\n" +
+            "abs ft2.xy, ft2.xy\n" +
+            "div ft2.xy, ft2.xy, fc0.ww\n" +
+            "sub ft2.xy, fc1.zz, ft2.xy\n" +
+            "max ft2.xy, fc1.ww, ft2.xy\n" +
+            "pow ft2.xy, ft2.xy, fc2.xx\n" +
 
-            // distY = max(0.0, 0.5 - distance(m.y, uv.y)/t ) ^ 2;
-            "sub ft2.y, fc0.y, ft5.y\n" +
-            "abs ft2.y, ft2.y\n" +
-            "div ft2.y, ft2.y, fc0.w\n" +
-            "sub ft2.y, fc1.z, ft2.y\n" +
-            "max ft2.y, fc1.w, ft2.y\n" +
-            "pow ft2.y, ft2.y, fc2.x\n" +
-
-            // ft1.x = ft1.x * ft2.x
+            // ft1.x = ft1.x * ft2.x * ft2.y
             "mul ft1.x, ft1.x, ft2.x\n" +
-
-            // ft1.x = ft1.x * ft2.y
             "mul ft1.x, ft1.x, ft2.y\n" +
 
-            // ft0 = v0
-            "mov ft0, ft5\n" +
-
             // ft0.x = v0.x + ft1.x
-            "add ft0.x, ft5.x, ft1.x\n" +
+            "mov ft0, v0\n" +
+            "add ft0.x, ft0.x, ft1.x\n" +
 
-            "tex ft4, ft0, fs0 <2d,norepeat,linear>\n" +
-
-//            "add ft4.x, ft4.x, fc1.y\n"  +
-
-            "mov oc, ft4";
+            "tex oc, ft0, fs0 <2d,norepeat,linear>\n";
 
 
         private var fc0 : Vector.<Number> = new <Number>[      0,   // Center Point X
