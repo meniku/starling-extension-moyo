@@ -1,8 +1,11 @@
 /*
  * Copyright 2013 by Didgeridoo Unlimited.
  */
-package starling.extensions.moyo.filters.example
+package starling.extensions
 {
+    import starling.extensions.moyo.effects.example.PolygonEffectExample;
+    import starling.extensions.moyo.effects.example.RenderTextureEffectExample;
+    import starling.extensions.moyo.filters.example.*;
     import starling.display.Button;
     import starling.display.Sprite;
     import starling.events.Event;
@@ -16,14 +19,16 @@ package starling.extensions.moyo.filters.example
      *
      * @author Nils Kübler
      */
-    public class MoyoFilterExampleSelector  extends Sprite
+    public class MoyoExampleSelector  extends Sprite
     {
         private var examples:Object = {
-            "WaveDistort" : WaveDistortFilterExample
+            "PolygonEffect" : PolygonEffectExample,
+//            "WaveDistortFilter" : WaveDistortFilterExample
+            "Render Texture Effect": RenderTextureEffectExample
         };
         private var _currentExample : Sprite = null;
 
-        public function MoyoFilterExampleSelector ()
+        public function MoyoExampleSelector ()
         {
             addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
         }
@@ -34,7 +39,7 @@ package starling.extensions.moyo.filters.example
 
             var curX:uint = 50;
             for(var name:String in examples) {
-                var btn1:TextField = new TextField(100, 20, name, "Verdana", 12, 0xaaaaff);
+                var btn1:TextField = new TextField(150, 20, name, "Verdana", 12, 0xaaaaff);
                 btn1.addEventListener(TouchEvent.TOUCH, function(evt:TouchEvent) : void {
                     var touch:Touch = evt.getTouch(btn1);
                     if(touch && touch.phase == TouchPhase.BEGAN) {
@@ -43,7 +48,7 @@ package starling.extensions.moyo.filters.example
                 });
                 addChild(btn1);
                 btn1.x = curX;
-                curX += 100;
+                curX += 150;
                 if(!currentExample) { currentExample = new examples[name]; }
             }
 
