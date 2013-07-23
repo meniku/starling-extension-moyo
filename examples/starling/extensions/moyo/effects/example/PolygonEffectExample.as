@@ -51,8 +51,6 @@ package starling.extensions.moyo.effects.example
             addChild(image);
             try {
                 effect = new Polygon (100);
-//                effect.pivotX = 50;
-//                effect.pivotY = 50;
                 effect.alpha = 0;
                 addChild (effect);
             } catch (e : Error) {

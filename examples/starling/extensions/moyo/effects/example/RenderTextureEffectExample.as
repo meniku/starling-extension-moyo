@@ -5,6 +5,8 @@ package starling.extensions.moyo.effects.example
 {
     import flash.geom.Point;
 
+    import starling.display.DisplayObject;
+
     import starling.display.Image;
     import starling.display.Sprite;
     import starling.events.EnterFrameEvent;
@@ -51,10 +53,10 @@ package starling.extensions.moyo.effects.example
             image.touchable = true;
             addChild(image);
             try {
-                effect = new RenderTextureEffect(256, 256);
-//                effect.pivotX = 50;
-//                effect.pivotY = 50;
+                effect = new RenderTextureEffect(256, 256, new <DisplayObject>[image]);
                 effect.alpha = 0;
+                effect.pivotX = 128;
+                effect.pivotY = 128;
                 addChild (effect);
             } catch (e : Error) {
                 tf.text = "ERROR:" + e.message;
