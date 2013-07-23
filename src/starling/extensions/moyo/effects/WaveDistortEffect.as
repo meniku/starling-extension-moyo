@@ -53,9 +53,24 @@ package starling.extensions.moyo.effects
             0    // y-factor for the coordinate output
         ];
 
+        /**
+         * Create a new WaveDistortEffect
+         *
+         * @param width size in pixels for the effect
+         * @param height size in pixels for the effect
+         * @param sources specify all DisplayoObjects that will be used as render source for this effect
+         * @param centerPivot when this is set to true, x- and y-coordinates are given as the center of the object, which makes it easier to place the effect
+         * @param persistent when this is set to true, the texture is only drawn once, so it will give you an performance boost, but changes on the sources will not be drawn.
+         */
         public function WaveDistortEffect (width : uint = 512, height : uint = 512, sources : Vector.<DisplayObject> = null, centerPivot : Boolean = false, persistent : Boolean = false)
         {
             super (width, height, sources, centerPivot, persistent);
+        }
+
+        override public function dispose () : void
+        {
+            step = 0;
+            super.dispose ();
         }
 
         override protected function getProgramName () : String

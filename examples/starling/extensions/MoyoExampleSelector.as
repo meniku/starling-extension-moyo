@@ -8,6 +8,8 @@ package starling.extensions
     import feathers.data.ListCollection;
     import feathers.themes.AeonDesktopTheme;
 
+    import starling.core.Starling;
+
     import starling.display.Sprite;
     import starling.events.Event;
     import starling.extensions.moyo.effects.example.RenderTextureEffectExample;
@@ -30,8 +32,8 @@ package starling.extensions
         {
             addEventListener (Event.ADDED_TO_STAGE, addedToStageHandler);
             examples = new ListCollection ([
-                                               { "label": "Render Texture Effect", "class": RenderTextureEffectExample },
                                                { "label": "Wave Distort Effect", "class": WaveDistortEffectExample },
+                                               { "label": "Render Texture Effect", "class": RenderTextureEffectExample },
                                            ]);
         }
 
@@ -39,6 +41,7 @@ package starling.extensions
         {
             theme = new AeonDesktopTheme (this);
             stage.color = 0x000000;
+            Starling.current.nativeStage.color = 0x000000;
 
             tabBar = new TabBar ();
             tabBar.dataProvider = examples;
