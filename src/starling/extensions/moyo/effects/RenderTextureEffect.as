@@ -27,41 +27,13 @@ package starling.extensions.moyo.effects
     import starling.utils.VertexData;
 
     /**
-     * Polygon.
+     * RenderTextureEffect.
      *
      * @author Nils Kübler
      */
     public class RenderTextureEffect extends DisplayObject
     {
-        private static var PROGRAM_NAME : String = "rendertexture";
-
-        private static function registerPrograms () : void
-        {
-            var target : Starling = Starling.current;
-            if (target.hasProgram (PROGRAM_NAME)) {
-                return;
-            } // already registered
-
-            var vertexProgramCode : String = [
-                "m44 op, va0, vc0", // 4x4 matrix transform to output space
-                "mov v0, va1",      // store texture coordinate at v0
-                "mov v1, vc4",      // store alpha vector at v1
-            ].join("\n");
-
-            var fragmentProgramCode : String = [
-                "tex ft0, v0, fs0 <2d,clamp,linear>",   // store texture color at v0 to ft0
-//                "mul oc, ft0, v1",                      // multiply ft0 with alpha vector v1 and store to output oc
-                "add oc, ft0, v1",                      // add ft0 with alpha vector v1 and store to output oc
-            ].join("\n");
-
-            var vertexProgramAssembler : AGALMiniAssembler = new AGALMiniAssembler ();
-            vertexProgramAssembler.assemble (Context3DProgramType.VERTEX, vertexProgramCode);
-
-            var fragmentProgramAssembler : AGALMiniAssembler = new AGALMiniAssembler ();
-            fragmentProgramAssembler.assemble (Context3DProgramType.FRAGMENT, fragmentProgramCode);
-
-            target.registerProgram (PROGRAM_NAME, vertexProgramAssembler.agalcode, fragmentProgramAssembler.agalcode);
-        }
+        private var mProgramName:String;
 
         private var mVertexData : VertexData;
         private var mIndexData : Vector.<uint>;
@@ -77,6 +49,7 @@ package starling.extensions.moyo.effects
 
         public function RenderTextureEffect (width:uint = 512, height:uint = 512, sources:Vector.<DisplayObject> = null, persistent:Boolean = true) : void
         {
+            mProgramName = getProgramName();
             mSources = sources;
             mWidth = width;
             mHeight = height;
@@ -154,7 +127,7 @@ package starling.extensions.moyo.effects
                 support.applyBlendMode ( false );
 
                 // activate program (shader) and set the required attributes / constants (5)
-                context.setProgram (Starling.current.getProgram (PROGRAM_NAME));
+                context.setProgram (Starling.current.getProgram (mProgramName));
                 context.setVertexBufferAt(0, mVertexBuffer, VertexData.POSITION_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
                 context.setVertexBufferAt(1, mVertexBuffer, VertexData.TEXCOORD_OFFSET,  Context3DVertexBufferFormat.FLOAT_2);
                 context.setProgramConstantsFromMatrix (Context3DProgramType.VERTEX, 0, support.mvpMatrix3D, true);
@@ -168,7 +141,86 @@ package starling.extensions.moyo.effects
                 context.setTextureAt(0, null);
                 context.setVertexBufferAt (1, null);
                 context.setVertexBufferAt (0, null);
+
+                onEffectRendered();
             }
+        }
+
+        //==============================================================================================================
+        // Override in Subclass
+        //==============================================================================================================
+
+        /**
+         * Override this when you.
+         * \
+         * @return name of the program
+         */
+        protected function getProgramName() : String {
+            return "renderTextureEffect";
+        }
+
+        /**
+         * Override this when you want to supply a custom vertex shader.
+         *
+         * Don't forget to also override getProgramName
+         *
+         * @return Fragment Shader Code.
+         */
+        protected function getVertexProgramCode() : String {
+            return [
+                "m44 op, va0, vc0", // 4x4 matrix transform to output space
+                "mov v0, va1",      // store texture coordinate at v0
+                "mov v1, vc4",      // store alpha vector at v1
+            ].join("\n");
+        }
+
+        /**
+         * this is usally overridden by all RenderTextureEffects .
+         *
+         * Don't forget to also override getProgramName
+         *
+         * @return Fragment Shader Code.
+         */
+        protected function getFragmentProgramCode() : String {
+            return [
+                "tex ft0, v0, fs0 <2d,clamp,linear>",   // store texture color at v0 to ft0
+//                "mul oc, ft0, v1",                      // multiply ft0 with alpha vector v1 and store to output oc
+                "add oc, ft0, v1",                      // add ft0 with alpha vector v1 and store to output oc
+            ].join("\n");
+        }
+
+        /**
+         * Override this if you want to do something additional when the texture changes
+         */
+        protected function onTextureDrawn() : void {
+
+        }
+
+        /**
+         * Override this if you want to do something additional after rendering the programs is completed
+         */
+        protected function onEffectRendered() : void {
+
+        }
+
+        //==============================================================================================================
+        // Private Methods
+        //==============================================================================================================
+
+        private function registerPrograms () : void
+        {
+            var target : Starling = Starling.current;
+            if (target.hasProgram (mProgramName)) {
+                return;
+            } // already registered
+
+            var vertexProgramAssembler : AGALMiniAssembler = new AGALMiniAssembler ();
+            vertexProgramAssembler.assemble (Context3DProgramType.VERTEX, getVertexProgramCode());
+
+            var fragmentProgramAssembler : AGALMiniAssembler = new AGALMiniAssembler ();
+            fragmentProgramAssembler.assemble (Context3DProgramType.FRAGMENT, getFragmentProgramCode());
+
+            target.registerProgram (mProgramName, vertexProgramAssembler.agalcode, fragmentProgramAssembler.agalcode);
         }
 
         private function drawToTexture () : void
@@ -181,6 +233,7 @@ package starling.extensions.moyo.effects
                             mRenderTexture.draw(mSources[i], getTransformationMatrix(mSources[i]));
                         }
                     });
+                    onTextureDrawn();
 
                     mTextureDrawn = true;
                 }
@@ -188,7 +241,6 @@ package starling.extensions.moyo.effects
                 mTextureDrawn = false;
             }
         }
-
 
         private function createVertexData() : void
         {
@@ -230,6 +282,10 @@ package starling.extensions.moyo.effects
             mIndexBuffer = context.createIndexBuffer (mIndexData.length);
             mIndexBuffer.uploadFromVector (mIndexData, 0, 6);
         }
+
+        //==============================================================================================================
+        // Properties
+        //==============================================================================================================
 
         public function get persistent () : Boolean
         {
