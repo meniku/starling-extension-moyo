@@ -3,6 +3,8 @@
  */
 package starling.extensions
 {
+
+    import starling.display.DisplayObject;
     import starling.extensions.moyo.effects.example.PolygonEffectExample;
     import starling.extensions.moyo.effects.example.RenderTextureEffectExample;
     import starling.extensions.moyo.filters.example.*;
@@ -23,7 +25,6 @@ package starling.extensions
     {
         private var examples:Object = {
             "PolygonEffect" : PolygonEffectExample,
-//            "WaveDistortFilter" : WaveDistortFilterExample
             "Render Texture Effect": RenderTextureEffectExample
         };
         private var _currentExample : Sprite = null;
@@ -40,18 +41,21 @@ package starling.extensions
             var curX:uint = 50;
             for(var name:String in examples) {
                 var btn1:TextField = new TextField(150, 20, name, "Verdana", 12, 0xaaaaff);
-                btn1.addEventListener(TouchEvent.TOUCH, function(evt:TouchEvent) : void {
-                    var touch:Touch = evt.getTouch(btn1);
-                    if(touch && touch.phase == TouchPhase.BEGAN) {
-                        currentExample = new examples[name];
-                    }
-                });
+                btn1.addEventListener(TouchEvent.TOUCH, btn_clickedHandler);
                 addChild(btn1);
                 btn1.x = curX;
+                btn1.name = name;
                 curX += 150;
                 if(!currentExample) { currentExample = new examples[name]; }
             }
+        }
 
+        private function btn_clickedHandler (event : TouchEvent) : void
+        {
+            var touch:Touch = event.getTouch(DisplayObject (event.currentTarget));
+            if(touch && touch.phase == TouchPhase.BEGAN) {
+                currentExample = new examples[DisplayObject(event.currentTarget).name];
+            }
         }
 
         private function set currentExample(sprite:Sprite) : void {

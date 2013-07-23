@@ -51,7 +51,7 @@ package starling.extensions.moyo.effects.example
             image.touchable = true;
             addChild(image);
             try {
-                effect = new RenderTextureEffect(512, 512);
+                effect = new RenderTextureEffect(256, 256);
 //                effect.pivotX = 50;
 //                effect.pivotY = 50;
                 effect.alpha = 0;
@@ -68,9 +68,11 @@ package starling.extensions.moyo.effects.example
             var touch : Touch = event.getTouch (this);
             if (touch && touch.phase == TouchPhase.BEGAN) {
                 step = 0.0;
-                var pt:Point = touch.getLocation(root);
+                var pt:Point = touch.getLocation(this);
                 effect.x = pt.x;
                 effect.y = pt.y;
+
+                trace(pt.y, pt.y);
                 addEventListener (EnterFrameEvent.ENTER_FRAME, enterFrameHandler);
             }
         }
