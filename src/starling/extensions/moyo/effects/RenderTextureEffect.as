@@ -46,7 +46,7 @@ package starling.extensions.moyo.effects
         private var mHeight : uint = 512;
         private var mSources : Vector.<DisplayObject> = null;
 
-        public function RenderTextureEffect (width : uint = 512, height : uint = 512, sources : Vector.<DisplayObject> = null, centerPivot:Boolean = false, persistent : Boolean = false) : void
+        public function RenderTextureEffect (width : uint = 512, height : uint = 512, sources : Vector.<DisplayObject> = null, centerPivot : Boolean = false, persistent : Boolean = false) : void
         {
             touchable = false;
 
@@ -55,7 +55,7 @@ package starling.extensions.moyo.effects
             mWidth = width;
             mHeight = height;
 
-            if(centerPivot) {
+            if (centerPivot) {
                 this.pivotX = width >> 1;
                 this.pivotY = height >> 1;
             }

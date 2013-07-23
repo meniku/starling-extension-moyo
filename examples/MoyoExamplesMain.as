@@ -5,7 +5,6 @@ package
 {
     import flash.display.Sprite;
     import flash.events.Event;
-    import flash.geom.Rectangle;
 
     import starling.core.Starling;
     import starling.extensions.MoyoExampleSelector;
@@ -23,17 +22,16 @@ package
         public function MoyoExamplesMain ()
         {
             Starling.handleLostContext = true;
-            addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
+            addEventListener (Event.ADDED_TO_STAGE, addedToStageHandler);
         }
 
         private function addedToStageHandler (event : Event) : void
         {
-            this.starling = new Starling( MoyoExampleSelector, stage);
+            this.starling = new Starling (MoyoExampleSelector, stage);
             this.starling.enableErrorChecking = true;
             this.starling.showStats = true;
-            this.starling.start( );
+            this.starling.start ();
         }
-
 
     }
 }

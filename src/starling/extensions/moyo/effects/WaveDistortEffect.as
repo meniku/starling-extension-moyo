@@ -15,39 +15,47 @@ package starling.extensions.moyo.effects
      */
     public class WaveDistortEffect extends RenderTextureEffect
     {
-        public var step:Number = 0.0;                   // 0.0 -> 1.0
+        /**
+         * this property is used to animate the effect between 0 and 1
+         */
+        public var step : Number = 0.0;
 
-        public var strengthFactor:Number = 1.0;
-        public var centerX:Number = 0.5;
-        public var centerY:Number = 0.5;
-        public var vibration:Number = 0.2;
-        public var multiplier:Number = 100.0;
-        public var extrusion:Number = 0.5;
-        public var zero:Number = 0.0;
-        public var xInputFactor:Number = 0.0;
-        public var yInputFactor:Number = 1.0;
-        public var xOutputFactor:Number = 1.0;
-        public var yOutputFactor:Number = 0.0;
+        public var strengthFactor : Number = 1.0;
+        public var centerX : Number = 0.5;
+        public var centerY : Number = 0.5;
+        public var vibration : Number = 0.2;
+        public var multiplier : Number = 100.0;
+        public var extrusion : Number = 0.5;
+        public var zero : Number = 0.0;
+        public var xInputFactor : Number = 0.0;
+        public var yInputFactor : Number = 1.0;
+        public var xOutputFactor : Number = 1.0;
+        public var yOutputFactor : Number = 0.0;
 
-        private static var fc0 : Vector.<Number> = new <Number>[      0,   // CenterX
-                                                                      0,   // CenterY
-                                                                      0,   // Strength (0 - 0.5 - 0, interpolated over the animation length) * strengthFactor
-                                                                      0];  // Step     (0 - 1, interpolated over the animation length)
+        private static var fc0 : Vector.<Number> = new <Number>[
+            0,   // CenterX
+            0,   // CenterY
+            0,   // Strength (0 - 0.5 - 0, interpolated over the animation length) * strengthFactor
+            0
+        ];  // Step     (0 - 1, interpolated over the animation length)
 
-        private static var fc1 : Vector.<Number> = new <Number> [     0.2,   // step * vibration
-                                                                      100.0, // multiplier
-                                                                      0.5,   // extrusion
-                                                                      0.0];  // zero
+        private static var fc1 : Vector.<Number> = new <Number> [
+            0.2,   // step * vibration
+            100.0, // multiplier
+            0.5,   // extrusion
+            0.0
+        ];  // zero
 
-        private static var fc2 : Vector.<Number> = new <Number> [      1.0, // x-factor for sin-input
-                                                                       0,   // y-factor for sin-input
-                                                                       1.0, // x-factor for the coordinate output
-                                                                       0    // y-factor for the coordinate output
+        private static var fc2 : Vector.<Number> = new <Number> [
+            1.0, // x-factor for sin-input
+            0,   // y-factor for sin-input
+            1.0, // x-factor for the coordinate output
+            0    // y-factor for the coordinate output
         ];
 
-        public function WaveDistortEffect (width:uint = 512, height:uint = 512, sources:Vector.<DisplayObject> = null, centerPivot:Boolean = false, persistent:Boolean = false)
+        public function WaveDistortEffect (width : uint = 512, height : uint = 512, sources : Vector.<DisplayObject> = null, centerPivot : Boolean = false, persistent : Boolean = false)
         {
-            super(width, height, sources, centerPivot, persistent);
+            super (width, height, sources, centerPivot, persistent);
         }
 
         override protected function getProgramName () : String
@@ -102,14 +110,13 @@ package starling.extensions.moyo.effects
 
                 // finally output the texture
                 "tex oc, ft0, fs0 <2d,norepeat,linear>",
-            ].join("\n");
+            ].join ("\n");
 
         }
 
-
         override protected function onProgramReady (context : Context3D) : void
         {
-            var strength:Number = Math.max(0, step > 0.5 ? 1.0 - step : step) * strengthFactor;
+            var strength : Number = Math.max (0, step > 0.5 ? 1.0 - step : step) * strengthFactor;
 
             fc0[0] = centerX;
             fc0[1] = centerY;
@@ -126,9 +133,9 @@ package starling.extensions.moyo.effects
             fc2[2] = xOutputFactor;
             fc2[3] = yOutputFactor;
 
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, fc0, 1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, fc1, 1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, fc2, 1);
+            context.setProgramConstantsFromVector (Context3DProgramType.FRAGMENT, 0, fc0, 1);
+            context.setProgramConstantsFromVector (Context3DProgramType.FRAGMENT, 1, fc1, 1);
+            context.setProgramConstantsFromVector (Context3DProgramType.FRAGMENT, 2, fc2, 1);
 
             super.onProgramReady (context);
         }
