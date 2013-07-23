@@ -101,7 +101,7 @@ package starling.extensions.moyo.effects
                 "add ft0.y, ft0.y, ft2.y",
 
                 // finally output the texture
-                "tex oc, ft0, fs0 <2d,repeat,linear>",
+                "tex oc, ft0, fs0 <2d,norepeat,linear>",
             ].join("\n");
 
         }

@@ -5,10 +5,12 @@ package starling.extensions.moyo.effects.example
 {
     import feathers.controls.Label;
     import feathers.controls.Slider;
+    import feathers.controls.TextArea;
     import feathers.themes.AeonDesktopTheme;
 
     import flash.geom.Point;
     import flash.text.TextFormat;
+    import flash.utils.Dictionary;
 
     import starling.display.DisplayObject;
 
@@ -37,8 +39,9 @@ package starling.extensions.moyo.effects.example
         public static const TestTexture : Class;
 
         private var tf : TextField;
-        private var step : Number = 0.0;
         private var image : Image;
+        private var textArea:TextArea;
+        private var changedProperties:Dictionary = new Dictionary();
 
         private var effect:WaveDistortEffect;
 
@@ -69,6 +72,7 @@ package starling.extensions.moyo.effects.example
 
 
             var num:uint = 0;
+
             addSlider("rotation", -Math.PI , Math.PI , 0.1, num++);
             addSlider("vibration", -1.0, 1.0, 0.1, num++);
             addSlider("multiplier", -1000, 1000.0, 10, num++);
@@ -82,6 +86,13 @@ package starling.extensions.moyo.effects.example
             addSlider("centerX", 0, 1.0, 0.1, num++);
             addSlider("centerY", 0, 1.0, 0.1, num++);
 
+            textArea = new TextArea();
+            textArea.x = 710;
+            textArea.y = 50 + 30 * num;
+            textArea.width = 180;
+            textArea.height = 150;
+            addChild(textArea);
+
             image.addEventListener (TouchEvent.TOUCH, touchHandler);
         }
 
@@ -89,23 +100,20 @@ package starling.extensions.moyo.effects.example
         {
             var touch : Touch = event.getTouch (this);
             if (touch && touch.phase == TouchPhase.BEGAN) {
-                step = 0.0;
+                effect.step = 0.0;
                 var pt:Point = touch.getLocation(this);
                 effect.x = pt.x;
                 effect.y = pt.y;
-                effect.forceRedraw();
-
-                trace(pt.y, pt.y);
                 addEventListener (EnterFrameEvent.ENTER_FRAME, enterFrameHandler);
             }
         }
 
         private function enterFrameHandler (event : Event) : void
         {
-            effect.step = step += 0.02;
-
-            if (step > 1.0) {
-                step = 0;
+            // TODO: add juggler support
+            effect.step += 0.02;
+            if (effect.step > 1.0) {
+                effect.step = 0;
                 removeEventListener (Event.ENTER_FRAME, enterFrameHandler);
             }
         }
@@ -118,7 +126,7 @@ package starling.extensions.moyo.effects.example
             label.x = 710;
             label.y = 30 + 30 * i;
             addChild(label);
-            label.textRendererProperties.textFormat.color = 0xffffff;// = new TextFormat( "Source Sans Pro", 16, 0x333333 );
+            label.textRendererProperties.textFormat = new TextFormat( "Verdana", 10, 0xffffff );
 
             var slider:Slider = new Slider();
             slider.minimum = min;
@@ -130,9 +138,19 @@ package starling.extensions.moyo.effects.example
             slider.value = this.effect[property];
             slider.addEventListener(Event.CHANGE, function(evt:Event) {
                 effect[property] = slider.value;
+                changedProperties[property] = slider.value;
                 label.text = property + " : " + slider.value + " / default : " + def;
+                updateTextArea();
             } );
             addChild(slider);
+        }
+
+        private function updateTextArea() : void {
+            var text:Array = [];
+            for (var key:String in changedProperties) {
+                text.push("effect."+key+" = " + changedProperties[key] + ";");
+            }
+            textArea.text = text.join("\n");
         }
     }
 }
