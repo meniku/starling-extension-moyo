@@ -3,7 +3,12 @@
  */
 package starling.extensions.moyo.effects.example
 {
+    import feathers.controls.Label;
+    import feathers.controls.Slider;
+    import feathers.themes.AeonDesktopTheme;
+
     import flash.geom.Point;
+    import flash.text.TextFormat;
 
     import starling.display.DisplayObject;
 
@@ -62,7 +67,22 @@ package starling.extensions.moyo.effects.example
                 tf.text = "ERROR:" + e.message;
             }
 
-            this.addEventListener (TouchEvent.TOUCH, touchHandler);
+
+            var num:uint = 0;
+            addSlider("rotation", -Math.PI , Math.PI , 0.1, num++);
+            addSlider("vibration", -1.0, 1.0, 0.1, num++);
+            addSlider("multiplier", -1000, 1000.0, 10, num++);
+            addSlider("extrusion", 0.1, 2.0, 0.1, num++);
+            addSlider("zero", -1.0, 1.0, 0.1, num++);
+            addSlider("xInputFactor", -5.0, 5.0, 0.1, num++);
+            addSlider("yInputFactor", -5.0, 5.0, 0.1, num++);
+            addSlider("xOutputFactor", -5.0, 5.0, 0.1, num++);
+            addSlider("yOutputFactor", -5.0, 5.0, 0.1, num++);
+            addSlider("strengthFactor", -5.0, 5.0, 0.1, num++);
+            addSlider("centerX", 0, 1.0, 0.1, num++);
+            addSlider("centerY", 0, 1.0, 0.1, num++);
+
+            image.addEventListener (TouchEvent.TOUCH, touchHandler);
         }
 
         private function touchHandler (event : TouchEvent) : void
@@ -88,6 +108,31 @@ package starling.extensions.moyo.effects.example
                 step = 0;
                 removeEventListener (Event.ENTER_FRAME, enterFrameHandler);
             }
+        }
+
+        private function addSlider ( property:String, min : Number, max : Number, step : Number, i:uint) : void
+        {
+            var def:Number = this.effect[property];
+            var label:Label = new Label();
+            label.text = property + ": " + def;
+            label.x = 710;
+            label.y = 30 + 30 * i;
+            addChild(label);
+            label.textRendererProperties.textFormat.color = 0xffffff;// = new TextFormat( "Source Sans Pro", 16, 0x333333 );
+
+            var slider:Slider = new Slider();
+            slider.minimum = min;
+            slider.maximum = max;
+            slider.step = step;
+            slider.x = 710;
+            slider.width = 180;
+            slider.y = label.y + 15;
+            slider.value = this.effect[property];
+            slider.addEventListener(Event.CHANGE, function(evt:Event) {
+                effect[property] = slider.value;
+                label.text = property + " : " + slider.value + " / default : " + def;
+            } );
+            addChild(slider);
         }
     }
 }

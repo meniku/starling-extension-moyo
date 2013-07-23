@@ -4,6 +4,11 @@
 package starling.extensions
 {
 
+    import feathers.controls.Button;
+    import feathers.controls.TabBar;
+    import feathers.data.ListCollection;
+    import feathers.themes.AeonDesktopTheme;
+
     import starling.display.DisplayObject;
     import starling.display.Sprite;
     import starling.events.Event;
@@ -12,7 +17,7 @@ package starling.extensions
     import starling.events.TouchPhase;
     import starling.extensions.moyo.effects.example.RenderTextureEffectExample;
     import starling.extensions.moyo.effects.example.WaveDistortEffectExample;
-    import starling.text.TextField;
+
 
     /**
      * MoyoFilterExampleSelector.
@@ -21,40 +26,36 @@ package starling.extensions
      */
     public class MoyoExampleSelector extends Sprite
     {
-        private var examples : Object = {
-            "Render Texture Effect": RenderTextureEffectExample,
-            "Wave Distort Effect"  : WaveDistortEffectExample
-        };
+        private var examples : ListCollection;
 
         private var _currentExample : Sprite = null;
+        private var theme : AeonDesktopTheme;
+        private var tabBar : TabBar;
 
         public function MoyoExampleSelector ()
         {
             addEventListener (Event.ADDED_TO_STAGE, addedToStageHandler);
+            examples = new ListCollection([
+              { "label": "Render Texture Effect", "class": RenderTextureEffectExample },
+              { "label": "Wave Distort Effect", "class": WaveDistortEffectExample },
+            ]);
         }
 
         private function addedToStageHandler (event : Event) : void
         {
+            theme =  new AeonDesktopTheme(this);
             stage.color = 0x000000;
 
-            var curX : uint = 50;
-            for (var name : String in examples) {
-                var btn1 : TextField = new TextField (150, 20, name, "Verdana", 12, 0xaaaaff);
-                btn1.addEventListener (TouchEvent.TOUCH, btn_clickedHandler);
-                addChild (btn1);
-                btn1.x = curX;
-                btn1.name = name;
-                curX += 150;
-                if (!currentExample) { currentExample = new examples[name]; }
-            }
+            tabBar = new TabBar();
+            tabBar.dataProvider = examples;
+            tabBar.x = 100;
+            tabBar.addEventListener(Event.CHANGE, tabBar_changedHandler);
+            addChild(tabBar);
         }
 
-        private function btn_clickedHandler (event : TouchEvent) : void
+        private function tabBar_changedHandler (event : Event) : void
         {
-            var touch : Touch = event.getTouch (DisplayObject (event.currentTarget));
-            if (touch && touch.phase == TouchPhase.BEGAN) {
-                currentExample = new examples[DisplayObject (event.currentTarget).name];
-            }
+            currentExample = new (tabBar.selectedItem['class']);
         }
 
         private function set currentExample (sprite : Sprite) : void
