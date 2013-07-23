@@ -286,6 +286,7 @@ package starling.extensions.moyo.effects
                 mRenderTexture.dispose();
             }
             mRenderTexture = new RenderTexture(mWidth, mHeight, mPersistent);
+            mTextureDrawn = false;
         }
 
         private function createBuffers () : void

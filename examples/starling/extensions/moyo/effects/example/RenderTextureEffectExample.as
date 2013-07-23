@@ -79,7 +79,7 @@ package starling.extensions.moyo.effects.example
 
         private function enterFrameHandler (event : Event) : void
         {
-            step += 0.05;
+            step += 0.02;
 
             effect.alpha = step;
 

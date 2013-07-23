@@ -5,6 +5,7 @@ package
 {
     import flash.display.Sprite;
     import flash.events.Event;
+    import flash.geom.Rectangle;
 
     import starling.core.Starling;
     import starling.extensions.MoyoExampleSelector;
@@ -14,13 +15,14 @@ package
      *
      * @author Nils Kübler
      */
-    [SWF(width=900, height=750, backgroundColor=0x000000, frameRate=60)]
+    [SWF(width='900', height='750', backgroundColor='#000000', frameRate='60')]
     public class MoyoExamplesMain extends Sprite
     {
         private var starling : Starling;
 
         public function MoyoExamplesMain ()
         {
+            Starling.handleLostContext = true;
             addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
         }
 
@@ -31,5 +33,7 @@ package
             this.starling.showStats = true;
             this.starling.start( );
         }
+
+
     }
 }
