@@ -24,6 +24,7 @@ package starling.extensions.moyo.effects
     import starling.events.Event;
     import starling.textures.RenderTexture;
     import starling.textures.Texture;
+    import starling.utils.MatrixUtil;
     import starling.utils.VertexData;
 
     /**
@@ -33,6 +34,8 @@ package starling.extensions.moyo.effects
      */
     public class RenderTextureEffect extends DisplayObject
     {
+        private static var sHelperPoint:Point = new Point();
+
         private var mProgramName:String;
 
         private var mVertexData : VertexData;
@@ -68,18 +71,24 @@ package starling.extensions.moyo.effects
             createBuffers ();
         }
 
+        public function forceRedraw() : void {
+            if(mTextureDrawn) {
+                mTextureDrawn = false;
+                if(mPersistent) {
+                    mRenderTexture.clear();
+                }
+            }
+        }
+
+        //==============================================================================================================
+        // Required Display Object methods
+        //==============================================================================================================
+
         private function onContextCreated (event : Event) : void
         {
             registerPrograms ();
             createBuffers ();
-            drawToTexture();
-        }
-
-        // TODO: call this whenever width/height changes
-        private function onResized() : void {
-            createRenderTexture();
-            createVertexData();
-            drawToTexture();
+            mTextureDrawn = false;
         }
 
         public override function dispose () : void
@@ -101,7 +110,9 @@ package starling.extensions.moyo.effects
                 resultRect = new Rectangle ();
             }
             var transformationMatrix : Matrix = getTransformationMatrix (targetSpace);
-            return mVertexData.getBounds (transformationMatrix, 0, -1, resultRect);
+            MatrixUtil.transformCoords(transformationMatrix, mWidth, mHeight, sHelperPoint);
+            resultRect.setTo(0, 0, sHelperPoint.x, sHelperPoint.y);
+            return resultRect;
         }
 
         public override function render (support : RenderSupport, alpha : Number) : void
@@ -132,6 +143,8 @@ package starling.extensions.moyo.effects
                 context.setVertexBufferAt(1, mVertexBuffer, VertexData.TEXCOORD_OFFSET,  Context3DVertexBufferFormat.FLOAT_2);
                 context.setProgramConstantsFromMatrix (Context3DProgramType.VERTEX, 0, support.mvpMatrix3D, true);
                 context.setProgramConstantsFromVector (Context3DProgramType.VERTEX, 4, alphaVector, 1);
+
+                onProgramReady(context);
                 context.setTextureAt(0, mRenderTexture.base);
 
                 // finally: draw the object! (6)
@@ -145,6 +158,7 @@ package starling.extensions.moyo.effects
                 onEffectRendered();
             }
         }
+
 
         //==============================================================================================================
         // Override in Subclass
@@ -185,9 +199,19 @@ package starling.extensions.moyo.effects
             return [
                 "tex ft0, v0, fs0 <2d,clamp,linear>",   // store texture color at v0 to ft0
 //                "mul oc, ft0, v1",                      // multiply ft0 with alpha vector v1 and store to output oc
-                "add oc, ft0, v1",                      // add ft0 with alpha vector v1 and store to output oc
+                "add oc, ft0, v1",                      // Blend a bit for test reasons
             ].join("\n");
         }
+
+
+        /**
+         * Override this if you want to set something additional before rendering the programs
+         */
+        protected function onProgramReady (context : Context3D) : void
+        {
+
+        }
+
 
         /**
          * Override this if you want to do something additional when the texture changes
@@ -230,7 +254,9 @@ package starling.extensions.moyo.effects
                     mRenderTexture.drawBundled(function():void {
                         var l:uint = mSources.length;
                         for (var i:int=0; i<l; ++i) {
-                            mRenderTexture.draw(mSources[i], getTransformationMatrix(mSources[i]));
+                            var mat:Matrix = getTransformationMatrix(mSources[i]);
+                            mat.invert();
+                            mRenderTexture.draw(mSources[i], mat);
                         }
                     });
                     onTextureDrawn();
@@ -238,7 +264,7 @@ package starling.extensions.moyo.effects
                     mTextureDrawn = true;
                 }
             } else {
-                mTextureDrawn = false;
+                forceRedraw();
             }
         }
 
@@ -283,6 +309,13 @@ package starling.extensions.moyo.effects
             mIndexBuffer.uploadFromVector (mIndexData, 0, 6);
         }
 
+        // TODO: call this whenever width/height changes
+        private function onResized() : void {
+            createRenderTexture();
+            createVertexData();
+            forceRedraw();
+        }
+
         //==============================================================================================================
         // Properties
         //==============================================================================================================
@@ -305,7 +338,7 @@ package starling.extensions.moyo.effects
         public function set sources (value : Vector.<DisplayObject>) : void
         {
             mSources = value;
-            mTextureDrawn = false;
+            forceRedraw();
         }
     }
 }
