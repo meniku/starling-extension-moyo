@@ -16,15 +16,14 @@ which utilizes the `RenderTexture`.
 Initialization:
 
 ```
-    var effect:WaveDistortEffect = new WaveDistortEffect (512, 512, new <DisplayObject>[stage]);
+    var effect:WaveDistortEffect = new WaveDistortEffect (512, 512, new <DisplayObject>[source]);
     effect.x = 300;
     effect.y = 300;
     addChild (effect);
 ```
 
-This creates a 512x512 WaveDistortEffect based on the contents of the whole stage. You may chose different DisplayObject
-as the source for the effect if you wish to. This way you can prevent that undesired objects such as the HUD are
-included in the effect.
+This creates a 512x512 WaveDistortEffect based on the contents of some source sprite. You may chose multiple DisplayObject
+as the source for the effect if you wish to. However no source can be an ancestor of the effect.
 
 The last two Boolean parameters are:
  - `centerPivot`, which, when set true, will set `pivotX` and `pivotY` to the center of the object. This allows the effect to be placed more
