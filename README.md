@@ -1,6 +1,6 @@
 # Starling Extension: Moyo
 
-Collection of Starling Extensions developed primary for the [Moyo-Game][moyo].
+Starling Effect Extensions developed primary for [Moyo][moyo].
 
 Examples are provided [here][example] and are also included in the source code.
 
@@ -44,10 +44,30 @@ To actually display the effect as an animation, you have to update the `step` va
 
 For further properties for the effect, please take a look at the [examples][example].
 
-## Plans
+### Custom effects based on RenderTextureEffect
 
+To implement a custom effect you can `RenderTextureEffect` and implement the following methods:
+
+```
+    // required:
+    protected function getProgramName () : String;                  // unique name for your program
+    
+    //optional:
+    protected function getFragmentProgramCode () : String;          // custom fragment shader code
+    protected function getVertexProgramCode () : String;            // custom vertex shader code
+    protected function onProgramReady (context : Context3D) : void; // called right before rendering
+    protected function onEffectRendered () : void;                  // called right after rendering
+    protected function onTextureDrawn () : void;                    // called each time the texture changes
+    
+```
+
+The `WaveDistortEffect` is a simple example for implementation from most these methods.
+
+## Plans
 It's planned to utilize the `Juggler` and provide some kind of Wrapper to simplify the usage of the effects. The goal
 is to have a similar API as `Tweens` have.
+
+And of course, we want to provide much more effects ;-)
 
  [example]: http://labs.nkuebler.de/starling-extension-moyo
  [moyo]: http://moyo-game.com
