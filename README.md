@@ -26,10 +26,10 @@ This creates a 512x512 WaveDistortEffect based on the contents of the whole stag
 as the source for the effect if you wish to. This way you can prevent that undesired objects such as the HUD are
 included in the effect.
 
-The last two Boolean parameters are `centerPivot` and `persistent`:
- - `centerPivot` will set `pivotX` and `pivotY` to the center of the object. This allows the effect to be placed more
+The last two Boolean parameters are:
+ - `centerPivot`, which, when set true, will set `pivotX` and `pivotY` to the center of the object. This allows the effect to be placed more
     easily.
- - `persistent` will be false in the most cases. If you set this to true, the texture will be rendered only once,
+ - `persistent` should be false in the most cases. If you set this to true, the texture will be rendered only once,
     gaining performance but changes on your source objects will not be rendered.
 
 To actually display the effect as an animation, you have to update the `step` variable from frame to frame:
@@ -46,7 +46,7 @@ For further properties for the effect, please take a look at the [examples][exam
 
 ### Custom effects based on RenderTextureEffect
 
-To implement a custom effect you can `RenderTextureEffect` and implement the following methods:
+To implement a custom effect you can extend the `RenderTextureEffect` and implement the following methods:
 
 ```
     // required:
@@ -61,7 +61,7 @@ To implement a custom effect you can `RenderTextureEffect` and implement the fol
     
 ```
 
-The `WaveDistortEffect` is a simple example for implementation from most these methods.
+The `WaveDistortEffect` is a simple example for implementation of most of these methods.
 
 ## Plans
 It's planned to utilize the `Juggler` and provide some kind of Wrapper to simplify the usage of the effects. The goal
