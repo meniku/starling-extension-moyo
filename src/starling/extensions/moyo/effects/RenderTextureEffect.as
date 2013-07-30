@@ -74,12 +74,15 @@ package starling.extensions.moyo.effects
             createBuffers ();
         }
 
-        public function forceRedraw () : void
+        public function forceRedraw (immediate:Boolean = false) : void
         {
             if (mTextureDrawn) {
                 mTextureDrawn = false;
                 if (mPersistent) {
                     mRenderTexture.clear ();
+                }
+                if(immediate) {
+                    this.drawToTexture();
                 }
             }
         }
@@ -138,10 +141,8 @@ package starling.extensions.moyo.effects
             drawToTexture ();
 
             if (mTextureDrawn) {
-                // apply the current blendmode (4)
                 support.applyBlendMode (false);
 
-                // activate program (shader) and set the required attributes / constants (5)
                 context.setProgram (Starling.current.getProgram (mProgramName));
                 context.setVertexBufferAt (0, mVertexBuffer, VertexData.POSITION_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
                 context.setVertexBufferAt (1, mVertexBuffer, VertexData.TEXCOORD_OFFSET, Context3DVertexBufferFormat.FLOAT_2);
@@ -150,11 +151,8 @@ package starling.extensions.moyo.effects
 
                 onProgramReady (context);
                 context.setTextureAt (0, mRenderTexture.base);
-
-                // finally: draw the object! (6)
                 context.drawTriangles (mIndexBuffer, 0, 2);
 
-                // reset buffers (7)
                 context.setTextureAt (0, null);
                 context.setVertexBufferAt (1, null);
                 context.setVertexBufferAt (0, null);
@@ -204,8 +202,8 @@ package starling.extensions.moyo.effects
         {
             return [
                 "tex ft0, v0, fs0 <2d,clamp,linear>",   // store texture color at v0 to ft0
-//                "mul oc, ft0, v1",                      // multiply ft0 with alpha vector v1 and store to output oc
-                "add oc, ft0, v1",                      // Blend a bit for test reasons
+                "mul oc, ft0, v1",                      // multiply ft0 with alpha vector v1 and store to output oc
+//                "add oc, ft0, v1",                      // Blend a bit for test reasons
             ].join ("\n");
         }
 

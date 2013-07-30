@@ -43,6 +43,23 @@ To actually display the effect as an animation, you have to update the `step` va
 
 For further properties for the effect, please take a look at the [examples][example].
 
+### Using the RenderTextureEffect with Starling filters
+
+The RenderTextureEffect just draws the given contents in their original appearance. However you can apply filters to
+it. If you need to apply a starling filter to only a part of your scene, this is the way to do it:
+
+```
+    var effect:Effect = new RenderTextureEffect (256, 256, new <DisplayObject>[image], true, true);
+    effect.alpha = 0.0;
+    effect.filter = new BlurFilter (4, 4, 1);
+    addChild (effect);
+    effect.filter.forceRedraw(true);
+```
+
+This currently works only with the `persistent`-parameter set to true.
+
+There is also an example-implementation at the [examples][example].
+
 ### Custom effects based on RenderTextureEffect
 
 To implement a custom effect you can extend the `RenderTextureEffect` and implement the following methods:
