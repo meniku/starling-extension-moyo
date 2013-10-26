@@ -132,7 +132,7 @@ package starling.extensions.moyo.effects.example
             slider.width = 180;
             slider.y = label.y + 15;
             slider.value = this.effect[property];
-            slider.addEventListener (Event.CHANGE, function (evt : Event)
+            slider.addEventListener (Event.CHANGE, function (evt : Event) : void
             {
                 effect[property] = slider.value;
                 changedProperties[property] = slider.value;

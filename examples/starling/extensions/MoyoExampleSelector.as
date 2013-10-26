@@ -12,6 +12,8 @@ package starling.extensions
 
     import starling.display.Sprite;
     import starling.events.Event;
+    import starling.extensions.moyo.display.ComicMovieClip;
+    import starling.extensions.moyo.display.example.ComicMovieClipsExample;
     import starling.extensions.moyo.effects.example.RenderTextureEffectExample;
     import starling.extensions.moyo.effects.example.WaveDistortEffectExample;
 
@@ -34,6 +36,7 @@ package starling.extensions
             examples = new ListCollection ([
                                                { "label": "Wave Distort Effect", "class": WaveDistortEffectExample },
                                                { "label": "Render Texture Effect", "class": RenderTextureEffectExample },
+                                               { "label": "Comic Movie Clip", "class": ComicMovieClipsExample },
                                            ]);
         }
 
@@ -48,6 +51,8 @@ package starling.extensions
             tabBar.x = 100;
             tabBar.addEventListener (Event.CHANGE, tabBar_changedHandler);
             addChild (tabBar);
+
+            currentExample = new WaveDistortEffectExample();
         }
 
         private function tabBar_changedHandler (event : Event) : void
